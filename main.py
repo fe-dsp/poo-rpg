@@ -7,6 +7,9 @@ class jogador:
         self.vida = vida
         self.ataque = ataque
         self.defesa = defesa
+        self.pocoes = 2
+
+        self.vida_inicial = self.vida
 
     def atacar(self, inimigo): # Crio um ataque simples sem defesa
         inimigo.vida -= self.ataque
@@ -15,6 +18,17 @@ class jogador:
         dano = self.ataque - inimigo.defesa
         if dano > 0:
             inimigo.vida -= dano
+    
+    def curar(self):
+        if self.pocoes > 0: # Verifico se o player ainda tem poções
+            vida_curada = self.vida + 5
+            if vida_curada > self.vida_inicial: # Verifico se a vida não vai ultrapassar a vida inicial quando tomar uma poção
+                self.vida = self.vida_inicial
+            else:
+                self.vida = vida_curada # Se não ultrapassar, a vida é acrescida em 5 pontos de vida
+           
+            self.pocoes -= 1 
+            print(f"Poções restantes: {self.pocoes}.")
 
 # Cria o bot com o range de valores igual do player mas de forma aleatória
 def criar_bot(vida_bot=0, ataque_bot=0, defesa_bot=0):
@@ -45,6 +59,7 @@ def criar_jogador():
     while True:
         defesa = int(input(f"Você tem {pontos} pontos para usar\nQual será sua defesa ? (0-5)  "))
         if 0 <= defesa <= 5 and pontos >= defesa:
+            pontos -= defesa
             break
         else:
             print("Valor inválido - digite novamente\n")
@@ -61,20 +76,30 @@ def jogo(player: object, bot:object):
     print(f"Você - {'♡'*player.vida} x Bot - {'♡'*bot.vida}")
 
     while True:
-        escolha_player = input("Qual será sua ação ? \n Atacar - Defender  ").lower().strip()
-        escolha_bot = random.choice(['atacar', 'defender'])
+        escolha_player = input("Qual será sua ação ? \n Atacar - Defender - Curar ").lower().strip()
+        escolha_bot = random.choice(['atacar', 'defender', 'curar'])
 
         if player.vida > 0 and bot.vida > 0: # Verifica se os dois estão vivos
             # Verifico as três opções possíveis de ataque e defesa entre os dois, defesa e defesa não gera nada na vida
-            if escolha_player == 'atacar' and escolha_bot == 'atacar':
-                player.atacar(bot)
-                bot.atacar(player)
-            
-            elif escolha_player == 'atacar' and escolha_bot == 'defender':
-                player.atacar_defendido(bot)
+            if escolha_player == 'curar':
+                if player.pocoes <= 0:
+                    print("Você não tinha mais poções, perdeu a vez...") # Tirei a centralização das mensagens na classe para evitar que o bot imprima essas mensagens também
+                player.curar()
 
-            elif escolha_player == 'defender' and escolha_bot == 'atacar':
-                bot.atacar_defendido(player)
+            elif escolha_player == 'atacar':
+                if escolha_bot == 'defender':
+                    player.atacar_defendido(bot)
+                else:    
+                    player.atacar(bot)
+
+            if escolha_bot == 'curar':
+                bot.curar()
+            
+            elif escolha_bot == 'atacar':
+                if escolha_player == 'defender':
+                    bot.atacar_defendido(player)
+                else:
+                    bot.atacar(player)
         
         # Após a ação eu verifico novamente se estão vivos para acabar o jogo sem ter uma ação avulsa no final
         if player.vida <= 0 or bot.vida <= 0:
