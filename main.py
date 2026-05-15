@@ -23,11 +23,32 @@ def criar_bot(vida_bot=0, ataque_bot=0, defesa_bot=0):
     defesa_bot = random.randint(1,4)
     return vida_bot, ataque_bot, defesa_bot
 
-# Crio o jogador perguntando todos os stats (ainda não tenho uma forma de limitar)
+# Crio o jogador perguntando todos os stats
 def criar_jogador():
-    vida = int(input("Qual será sua vida ? (1-10)  "))
-    ataque = int(input("Qual será seu ataque ? (1-5)  "))
-    defesa = int(input("Qual será sua defesa ? (1-5)  "))
+
+    pontos = 15 # O jogador vai ter uma quantidade específica de pontos para gastar em todos os seus atributos
+
+    while True: # Crio um loop que só acaba quando o jogador digita uma quantidade dentro da estipulada
+        vida = int(input(f"Você tem {pontos} pontos para usar\nQual será sua vida ? (1-10)  "))
+        if 1 <= vida <= 10:
+            pontos -= vida
+            break
+        else:
+            print("Valor inválido - digite novamente\n")
+    while True:    
+        ataque = int(input(f"Você tem {pontos} pontos para usar\nQual será seu ataque ? (1-5)  "))
+        if 1 <= ataque <= 5 and pontos >= ataque: # Aqui rola um segundo teste para saber se o jogador tem pontos suficientes para gastar
+            pontos -= ataque
+            break
+        else:
+            print("Valor inválido - digite novamente\n")
+    while True:
+        defesa = int(input(f"Você tem {pontos} pontos para usar\nQual será sua defesa ? (0-5)  "))
+        if 0 <= defesa <= 5 and pontos >= defesa:
+            break
+        else:
+            print("Valor inválido - digite novamente\n")
+
     return vida, ataque, defesa
 
 # Crio o modelo do jogo, o loop infinito até um dos dois morrerem
