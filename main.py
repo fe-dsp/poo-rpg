@@ -96,8 +96,20 @@ def jogo(player: object, bot:object):
     while True:
         escolha_player = input("Qual será sua ação ? \n Atacar - Defender - Curar ").lower().strip()
 
-        escolha_bot = random.choice(['atacar', 'defender', 'curar'])
-        
+        probabilidade = random.random()
+        if bot.vida >= bot.vida_inicial/2 or bot.pocoes == 0: # Se estiver com mais da metade da vida ou sem poções ele não vai se curar
+               
+            if probabilidade > 0.2:
+                escolha_bot = 'atacar'
+            else:
+                escolha_bot = 'defender'
+
+        else: # Se o bot estiver com poções e menos da metade da vida ele vai se curar ou defender
+
+            if probabilidade > 0.2:
+                escolha_bot = random.choice(['defender', 'curar'])
+            else:
+                escolha_bot = 'atacar'
 
         if player.vida > 0 and bot.vida > 0: # Verifica se os dois estão vivos
             # Verifico as três opções possíveis de ataque e defesa entre os dois, defesa e defesa não gera nada na vida
