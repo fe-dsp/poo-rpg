@@ -32,10 +32,28 @@ class jogador:
 
 # Cria o bot com o range de valores igual do player mas de forma aleatória
 def criar_bot(vida_bot=0, ataque_bot=0, defesa_bot=0):
-    vida_bot = random.randint(1,10)
-    ataque_bot = random.randint(1,5)
-    defesa_bot = random.randint(1,4)
-    return vida_bot, ataque_bot, defesa_bot
+    dificuldade = input("Escolha a dificuldade do jogo:\nFácil - Médio - Difícil ").strip().lower()
+
+    # Depois de pedir a diiculdade inicio um loop para gerar combinações infinitas até o bot estar dentro dos parâmetros
+    while True:
+        vida_bot = random.randint(1,10)
+        ataque_bot = random.randint(1,5)
+        defesa_bot = random.randint(1,4)
+
+        if dificuldade == 'fácil':
+            if 8 < (vida_bot + ataque_bot + defesa_bot) < 10:
+                return vida_bot, ataque_bot, defesa_bot
+        
+        elif dificuldade == 'médio':
+            if 13 < (vida_bot + ataque_bot + defesa_bot) < 15:
+                return vida_bot, ataque_bot, defesa_bot
+            
+        elif dificuldade == 'difícil':
+            if 18 < (vida_bot + ataque_bot + defesa_bot) < 20:
+                return vida_bot, ataque_bot, defesa_bot
+            
+        else: # Caso haja algum erro de digitação a dificuldade vai ser perguntada
+            dificuldade = input("Escolha inválida - escolha novamente:\nFácil - Médio - Difícil ").strip().lower()
 
 # Crio o jogador perguntando todos os stats
 def criar_jogador():
@@ -77,7 +95,9 @@ def jogo(player: object, bot:object):
 
     while True:
         escolha_player = input("Qual será sua ação ? \n Atacar - Defender - Curar ").lower().strip()
+
         escolha_bot = random.choice(['atacar', 'defender', 'curar'])
+        
 
         if player.vida > 0 and bot.vida > 0: # Verifica se os dois estão vivos
             # Verifico as três opções possíveis de ataque e defesa entre os dois, defesa e defesa não gera nada na vida
