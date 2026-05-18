@@ -3,7 +3,7 @@ import random
 class jogador:
 
     # Coloco o construtor para criar o jogador e suas ações
-    def __init__(self, vida, ataque, defesa):
+    def __init__(self, vida:int, ataque:int, defesa:int) -> None:
         self.vida = vida
         self.ataque = ataque
         self.defesa = defesa
@@ -12,12 +12,21 @@ class jogador:
         self.vida_inicial = self.vida
 
     def atacar(self, inimigo): # Crio um ataque simples sem defesa
-        inimigo.vida -= self.ataque
+        critico = random.randint(1,10)
+        if critico == 1:
+            inimigo.vida -= self.ataque * 2 # Caso o ataque seja crítico ele dá o dobro de dano, podendo dar hitkill em qualquer situação caso o ataque seja 5
+            print("Crítico !")
+        else:
+            inimigo.vida -= self.ataque
 
     def atacar_defendido(self, inimigo): # Caso alguém defenda o ataque vira esse
-        dano = self.ataque - inimigo.defesa
-        if dano > 0:
-            inimigo.vida -= dano
+        esquiva = random.randint(1,10)
+        if esquiva == 1:
+            print("Esquiva !") # Caso o ataque seja esquivado ele não dá nenhum dano
+        else:
+            dano = self.ataque - inimigo.defesa
+            if dano > 0:
+                inimigo.vida -= dano
     
     def curar(self):
         if self.pocoes > 0: # Verifico se o player ainda tem poções
@@ -28,7 +37,6 @@ class jogador:
                 self.vida = vida_curada # Se não ultrapassar, a vida é acrescida em 5 pontos de vida
            
             self.pocoes -= 1 
-            print(f"Poções restantes: {self.pocoes}.")
 
 # Cria o bot com o range de valores igual do player mas de forma aleatória
 def criar_bot(vida_bot=0, ataque_bot=0, defesa_bot=0):
@@ -39,17 +47,18 @@ def criar_bot(vida_bot=0, ataque_bot=0, defesa_bot=0):
         vida_bot = random.randint(1,10)
         ataque_bot = random.randint(1,5)
         defesa_bot = random.randint(1,4)
+        build = vida_bot + ataque_bot + defesa_bot
 
         if dificuldade == 'fácil':
-            if 8 < (vida_bot + ataque_bot + defesa_bot) < 10:
+            if 8 <= build <= 10:
                 return vida_bot, ataque_bot, defesa_bot
         
         elif dificuldade == 'médio':
-            if 13 < (vida_bot + ataque_bot + defesa_bot) < 15:
+            if 13 <= build <= 15:
                 return vida_bot, ataque_bot, defesa_bot
             
         elif dificuldade == 'difícil':
-            if 18 < (vida_bot + ataque_bot + defesa_bot) < 20:
+            if 18 <= build <= 20:
                 return vida_bot, ataque_bot, defesa_bot
             
         else: # Caso haja algum erro de digitação a dificuldade vai ser perguntada
@@ -116,7 +125,9 @@ def jogo(player: object, bot:object):
             if escolha_player == 'curar':
                 if player.pocoes <= 0:
                     print("Você não tinha mais poções, perdeu a vez...") # Tirei a centralização das mensagens na classe para evitar que o bot imprima essas mensagens também
-                player.curar()
+                else:
+                    player.curar()
+                    print(f"Poções restantes: {player.pocoes}.")
 
             elif escolha_player == 'atacar':
                 if escolha_bot == 'defender':
@@ -135,6 +146,7 @@ def jogo(player: object, bot:object):
         
         # Após a ação eu verifico novamente se estão vivos para acabar o jogo sem ter uma ação avulsa no final
         if player.vida <= 0 or bot.vida <= 0:
+            player.vida = max(0, player.vida) # Faz com que a vida não fique negativa e quando imprimir não saia um número negativo
             if player.vida > bot.vida:
                 print(f"Você venceu !!!\nFicou com {player.vida} de vida.")
             
